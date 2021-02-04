@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -32,6 +34,21 @@ type Game struct {
 	currentLevel string
 }
 
+func loadPNG(path string) *ebiten.Image {
+	fd, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+
+	im, _, err := image.Decode(fd)
+	if err != nil {
+		panic(err)
+	}
+
+	eim := ebiten.NewImageFromImage(im)
+	return eim
+}
+
 func (g *Game) Update() error {
 	level := g.levels[g.currentLevel]
 	return level.Update()
@@ -54,12 +71,14 @@ func main() {
 	ebiten.SetWindowTitle("Reed's Game!")
 
 	georgeLevel := NewGeorgeLevel()
+	katieLevel := NewKatieLevel()
 
 	game := &Game{
 		levels: map[string]Level{
 			"GEORGE": georgeLevel,
+			"KATIE":  katieLevel,
 		},
-		currentLevel: "GEORGE",
+		currentLevel: "KATIE",
 	}
 
 	if err := ebiten.RunGame(game); err != nil {
