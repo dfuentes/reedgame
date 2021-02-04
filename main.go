@@ -2,10 +2,7 @@ package main
 
 import (
 	"fmt"
-	"image/png"
-	"os"
 
-	"github.com/SolarLune/resolv"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -52,40 +49,11 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 
-	spritesfd, err := os.Open("./assets/monkeysprites.png")
-	if err != nil {
-		panic(err)
-	}
-	spritesImage, err := png.Decode(spritesfd)
-	if err != nil {
-		panic(err)
-	}
-
-	spritesEbitenImage := ebiten.NewImageFromImage(spritesImage)
-
-	player := Player{
-		sprite: Sprite{
-			image: spritesEbitenImage.SubImage(GetTileRect(0, 2)).(*ebiten.Image),
-		},
-		rect: resolv.NewRectangle(ScreenX/2, ScreenY/2, SpriteTileX, SpriteTileY),
-		velX: float64(0),
-		velY: float64(0),
-	}
-
-	space := resolv.NewSpace()
-
-	floor := resolv.NewRectangle(0, ScreenY-10, ScreenX, 10)
-	space.Add(floor)
-
 	fmt.Println("starting")
 	ebiten.SetWindowSize(2*ScreenX, 2*ScreenY)
-	ebiten.SetWindowTitle("test")
+	ebiten.SetWindowTitle("Reed's Game!")
 
-	georgeLevel := &GeorgeLevel{
-		state:  Playing,
-		player: player,
-		space:  space,
-	}
+	georgeLevel := NewGeorgeLevel()
 
 	game := &Game{
 		levels: map[string]Level{

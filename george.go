@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	"os"
 
 	"github.com/SolarLune/resolv"
@@ -34,6 +35,41 @@ type Player struct {
 	velY     float64
 	rect     *resolv.Rectangle
 	grounded bool
+}
+
+func NewGeorgeLevel() *GeorgeLevel {
+	spritesfd, err := os.Open("./assets/monkeysprites.png")
+	if err != nil {
+		panic(err)
+	}
+	spritesImage, err := png.Decode(spritesfd)
+	if err != nil {
+		panic(err)
+	}
+
+	spritesEbitenImage := ebiten.NewImageFromImage(spritesImage)
+
+	player := Player{
+		sprite: Sprite{
+			image: spritesEbitenImage.SubImage(GetTileRect(0, 2)).(*ebiten.Image),
+		},
+		rect: resolv.NewRectangle(ScreenX/2, ScreenY/2, SpriteTileX, SpriteTileY),
+		velX: float64(0),
+		velY: float64(0),
+	}
+
+	space := resolv.NewSpace()
+
+	floor := resolv.NewRectangle(0, ScreenY-10, ScreenX, 10)
+	space.Add(floor)
+
+	georgeLevel := &GeorgeLevel{
+		state:  Playing,
+		player: player,
+		space:  space,
+	}
+
+	return georgeLevel
 }
 
 func GetTileRect(tilex, tiley int) image.Rectangle {
